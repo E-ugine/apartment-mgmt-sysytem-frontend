@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormNotification } from '@/components/ui/form-notification';
-import { DemoCredentials } from '@/components/auth/DemoCredentials';
 import { loginSchema, type LoginFormData } from '@/lib/validation';
 import { Building2, Eye, EyeOff } from 'lucide-react';
 import { getRoleBasedDashboard } from '@/routes/ProtectedRoute';
@@ -190,13 +189,11 @@ export default function LoginPage() {
               </Button>
               
               <p className="text-center text-sm text-muted-foreground">
-                Demo credentials: admin / password123
+                Enter your credentials to access the system
               </p>
             </CardFooter>
           </form>
         </Card>
-        
-        <DemoCredentials />
       </div>
     </div>
   );

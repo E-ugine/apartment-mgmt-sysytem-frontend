@@ -138,7 +138,7 @@ const Index = () => {
               </Link>
             </Button>
             <p className="text-sm text-white/60">
-              Demo credentials: admin / password123
+              Connect with your existing account credentials
             </p>
           </CardContent>
         </Card>
