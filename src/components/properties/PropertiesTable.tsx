@@ -79,10 +79,10 @@ export function PropertiesTable() {
     setEditingProperty(null);
   };
 
-  const filteredProperties = properties?.filter(property =>
+  const filteredProperties = (Array.isArray(properties) ? properties : []).filter(property =>
     property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     property.address.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  );
 
   if (error) {
     return (
