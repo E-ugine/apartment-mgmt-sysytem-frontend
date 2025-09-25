@@ -105,10 +105,10 @@ export function UnitsTable() {
     setAssigningUnit(null);
   };
 
-  const filteredUnits = units?.filter(unit =>
+  const filteredUnits = (Array.isArray(units) ? units : []).filter(unit =>
     unit.unitNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     unit.property?.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
