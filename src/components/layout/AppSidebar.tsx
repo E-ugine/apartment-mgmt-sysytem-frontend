@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -14,6 +14,17 @@ import {
 } from '@/components/ui/sidebar';
 import { Badge } from '@/components/ui/badge';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import {
   Home,
   Building,
   Users,
@@ -26,6 +37,7 @@ import {
   FileText,
   Calendar,
   MessageSquare,
+  LogOut,
 } from 'lucide-react';
 
 const roleMenus = {
@@ -66,11 +78,13 @@ const roleMenus = {
 };
 
 export function AppSidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
   const currentPath = location.pathname;
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const menuItems = roleMenus[user?.role as keyof typeof roleMenus] || [];
 
@@ -96,6 +110,23 @@ export function AppSidebar() {
       '/payments': 1,
     };
     return notifications[path] || 0;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: 'Logged out successfully',
+        description: 'You have been logged out of your account.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Logout failed',
+        description: 'Failed to log out. Please try again.',
+        variant: 'destructive',
+      });
+    }
+    setShowLogoutDialog(false);
   };
 
   return (
@@ -162,9 +193,43 @@ export function AppSidebar() {
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <button
+                    onClick={() => setShowLogoutDialog(true)}
+                    className={`flex items-center w-full text-left transition-colors hover:bg-muted/50 text-red-600 hover:text-red-700`}
+                    title={collapsed ? 'Logout' : undefined}
+                  >
+                    <LogOut className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'} shrink-0`} />
+                    {!collapsed && <span>Logout</span>}
+                  </button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Logout Confirmation Dialog */}
+        <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+          <AlertDialogContent className="bg-background">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to log out? You will need to sign in again to access your account.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Log Out
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </SidebarContent>
     </Sidebar>
   );
