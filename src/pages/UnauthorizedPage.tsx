@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldX, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { getRoleBasedDashboard } from '@/routes/ProtectedRoute';
 
 export default function UnauthorizedPage() {
+  const { user } = useAuth();
+  
   return (
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -27,7 +31,7 @@ export default function UnauthorizedPage() {
             </p>
             
             <Button asChild className="w-full">
-              <Link to="/dashboard">
+              <Link to={user ? getRoleBasedDashboard(user.role) : "/login"}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Return to Dashboard
               </Link>

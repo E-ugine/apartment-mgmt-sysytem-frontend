@@ -3,8 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { getRoleBasedDashboard } from '@/routes/ProtectedRoute';
 
 export function NotFoundPage() {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -25,7 +28,7 @@ export function NotFoundPage() {
               Go Back
             </Button>
             <Button asChild className="flex items-center gap-2">
-              <Link to="/dashboard">
+              <Link to={user ? getRoleBasedDashboard(user.role) : "/login"}>
                 <Home className="h-4 w-4" />
                 Home
               </Link>
