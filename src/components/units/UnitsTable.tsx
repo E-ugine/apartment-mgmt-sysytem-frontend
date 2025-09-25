@@ -175,7 +175,7 @@ export function UnitsTable() {
               </SelectTrigger>
               <SelectContent className="bg-background border shadow-lg z-50">
                 <SelectItem value="">All Properties</SelectItem>
-                {properties?.map((property) => (
+                {(Array.isArray(properties) ? properties : []).map((property) => (
                   <SelectItem key={property.id} value={property.id}>
                     {property.name}
                   </SelectItem>
