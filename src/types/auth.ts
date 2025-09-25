@@ -21,17 +21,18 @@ export interface AuthState {
 }
 
 export interface LoginCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface LoginResponse {
+  access: string;
+  refresh: string;
   user: User;
-  accessToken: string;
-  refreshToken: string;
 }
 
 export interface RegisterData {
+  username: string;
   email: string;
   password: string;
   firstName: string;

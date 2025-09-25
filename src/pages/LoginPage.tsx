@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormNotification } from '@/components/ui/form-notification';
+import { DemoCredentials } from '@/components/auth/DemoCredentials';
+import { loginSchema, type LoginFormData } from '@/lib/validation';
 import { Building2, Eye, EyeOff } from 'lucide-react';
+import { getRoleBasedDashboard } from '@/routes/ProtectedRoute';
 
 export default function LoginPage() {
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<LoginFormData>({
+    username: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Partial<LoginFormData>>({});
+  const [submitError, setSubmitError] = useState<string>('');
+
+  // Handle successful authentication redirect
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectTo = location.state?.from?.pathname || getRoleBasedDashboard(user.role);
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate, location.state]);
 
   const from = location.state?.from?.pathname || '/dashboard';
 
@@ -29,15 +46,52 @@ export default function LoginPage() {
     );
   }
 
+  const validateForm = (): boolean => {
+    try {
+      loginSchema.parse(formData);
+      setErrors({});
+      setSubmitError('');
+      return true;
+    } catch (error: any) {
+      const fieldErrors: Partial<LoginFormData> = {};
+      error.errors?.forEach((err: any) => {
+        const field = err.path[0] as keyof LoginFormData;
+        fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
+      return false;
+    }
+  };
+
+  const handleInputChange = (field: keyof LoginFormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear field error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+    // Clear submit error
+    if (submitError) {
+      setSubmitError('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
 
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
     try {
-      await login({ email, password });
-    } catch (error) {
-      // Error is handled by the auth context
+      // Type assertion since we've validated the form
+      await login(formData as Required<LoginFormData>);
+    } catch (error: any) {
+      // Enhanced error handling
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          'Login failed. Please check your credentials and try again.';
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -61,17 +115,28 @@ export default function LoginPage() {
           
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              {submitError && (
+                <FormNotification 
+                  type="error" 
+                  message={submitError}
+                />
+              )}
+
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange('username', e.target.value)}
                   required
                   disabled={isSubmitting}
+                  className={errors.username ? 'border-destructive' : ''}
                 />
+                {errors.username && (
+                  <p className="text-sm text-destructive">{errors.username}</p>
+                )}
               </div>
               
               <div className="space-y-2">
@@ -81,11 +146,11 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
                     required
                     disabled={isSubmitting}
-                    className="pr-10"
+                    className={`pr-10 ${errors.password ? 'border-destructive' : ''}`}
                   />
                   <Button
                     type="button"
@@ -102,6 +167,9 @@ export default function LoginPage() {
                     )}
                   </Button>
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password}</p>
+                )}
               </div>
             </CardContent>
             
@@ -109,7 +177,7 @@ export default function LoginPage() {
               <Button 
                 type="submit" 
                 className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
-                disabled={isSubmitting || !email || !password}
+                disabled={isSubmitting || !formData.username || !formData.password}
               >
                 {isSubmitting ? (
                   <div className="flex items-center space-x-2">
@@ -122,11 +190,13 @@ export default function LoginPage() {
               </Button>
               
               <p className="text-center text-sm text-muted-foreground">
-                Demo credentials: admin@example.com / password
+                Demo credentials: admin / password123
               </p>
             </CardFooter>
           </form>
         </Card>
+        
+        <DemoCredentials />
       </div>
     </div>
   );

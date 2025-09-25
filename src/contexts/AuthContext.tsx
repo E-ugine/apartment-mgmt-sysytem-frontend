@@ -15,7 +15,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 type AuthAction =
   | { type: 'AUTH_START' }
-  | { type: 'AUTH_SUCCESS'; payload: { user: User; accessToken: string; refreshToken: string } }
+  | { type: 'AUTH_SUCCESS'; payload: { user: User; access: string; refresh: string } }
   | { type: 'AUTH_ERROR' }
   | { type: 'LOGOUT' }
   | { type: 'SET_USER'; payload: User };
@@ -39,8 +39,8 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
       return {
         ...state,
         user: action.payload.user,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
+        accessToken: action.payload.access,
+        refreshToken: action.payload.refresh,
         isAuthenticated: true,
         isLoading: false,
       };
@@ -81,14 +81,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       dispatch({ type: 'AUTH_START' });
       const response = await authApi.login(credentials);
       
-      tokenManager.setTokens(response.accessToken, response.refreshToken);
+      tokenManager.setTokens(response.access, response.refresh);
       
       dispatch({
         type: 'AUTH_SUCCESS',
         payload: {
           user: response.user,
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
+          access: response.access,
+          refresh: response.refresh,
         },
       });
 
@@ -112,14 +112,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       dispatch({ type: 'AUTH_START' });
       const response = await authApi.register(data);
       
-      tokenManager.setTokens(response.accessToken, response.refreshToken);
+      tokenManager.setTokens(response.access, response.refresh);
       
       dispatch({
         type: 'AUTH_SUCCESS',
         payload: {
           user: response.user,
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
+          access: response.access,
+          refresh: response.refresh,
         },
       });
 
@@ -169,8 +169,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         type: 'AUTH_SUCCESS',
         payload: {
           user,
-          accessToken,
-          refreshToken: refreshToken || '',
+          access: accessToken,
+          refresh: refreshToken || '',
         },
       });
     } catch (error) {

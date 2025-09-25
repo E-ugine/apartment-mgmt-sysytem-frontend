@@ -1,7 +1,7 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { ApiResponse } from '@/types';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'http://localhost:8000';
 
 // Create axios instance
 export const apiClient = axios.create({
@@ -64,15 +64,15 @@ apiClient.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-          refresh_token: refreshToken,
+        const response = await axios.post(`${API_BASE_URL}/api/accounts/auth/token/refresh/`, {
+          refresh: refreshToken,
         });
 
-        const { access_token, refresh_token } = response.data.data;
-        tokenManager.setTokens(access_token, refresh_token);
+        const { access, refresh } = response.data;
+        tokenManager.setTokens(access, refresh);
 
         // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        originalRequest.headers.Authorization = `Bearer ${access}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
         // Refresh failed, redirect to login
