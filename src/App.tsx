@@ -16,6 +16,7 @@ import DashboardRedirect from "./pages/DashboardRedirect";
 import PropertiesPage from "./pages/PropertiesPage";
 import UnitsPage from "./pages/UnitsPage";
 import TenantsPage from "./pages/TenantsPage";
+import PaymentsPage from "./pages/PaymentsPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFound from "./pages/NotFound";
 
@@ -101,6 +102,15 @@ const App = () => (
               <ProtectedRoute allowedRoles={['landlord', 'caretaker', 'agent']}>
                 <AppLayout>
                   <TenantsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Payments Management */}
+            <Route path="/payments" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <PaymentsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

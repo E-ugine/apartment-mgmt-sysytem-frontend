@@ -28,11 +28,11 @@ export default function CaretakerDashboard() {
   const queryClient = useQueryClient();
   const [paymentForm, setPaymentForm] = useState<PaymentRecord>({
     tenantId: '',
-    unitId: '',
     amount: 0,
-    paymentMethod: 'cash',
-    description: '',
-    referenceNumber: '',
+    type: 'rent',
+    method: 'bank_transfer',
+    date: new Date().toISOString().split('T')[0],
+    notes: '',
   });
 
   const { data: properties, isLoading: propertiesLoading } = useQuery({
@@ -54,11 +54,11 @@ export default function CaretakerDashboard() {
       });
       setPaymentForm({
         tenantId: '',
-        unitId: '',
         amount: 0,
-        paymentMethod: 'cash',
-        description: '',
-        referenceNumber: '',
+        type: 'rent',
+        method: 'bank_transfer',
+        date: new Date().toISOString().split('T')[0],
+        notes: '',
       });
       queryClient.invalidateQueries({ queryKey: ['payments'] });
     },
@@ -73,7 +73,7 @@ export default function CaretakerDashboard() {
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!paymentForm.tenantId || !paymentForm.unitId || paymentForm.amount <= 0) {
+    if (!paymentForm.tenantId || paymentForm.amount <= 0) {
       toast({
         title: 'Invalid form',
         description: 'Please fill in all required fields.',
@@ -183,12 +183,15 @@ export default function CaretakerDashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="unitId">Unit ID</Label>
+                  <Label htmlFor="amount">Amount</Label>
                   <Input
-                    id="unitId"
-                    placeholder="Enter unit ID"
-                    value={paymentForm.unitId}
-                    onChange={(e) => setPaymentForm(prev => ({ ...prev, unitId: e.target.value }))}
+                    id="amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Payment amount"
+                    value={paymentForm.amount || ''}
+                    onChange={(e) => setPaymentForm(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
                     required
                   />
                 </div>
@@ -211,8 +214,8 @@ export default function CaretakerDashboard() {
                 <div className="space-y-2">
                   <Label htmlFor="paymentMethod">Payment Method</Label>
                   <Select 
-                    value={paymentForm.paymentMethod} 
-                    onValueChange={(value: any) => setPaymentForm(prev => ({ ...prev, paymentMethod: value }))}
+                    value={paymentForm.method} 
+                    onValueChange={(value: any) => setPaymentForm(prev => ({ ...prev, method: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -233,8 +236,8 @@ export default function CaretakerDashboard() {
                 <Input
                   id="referenceNumber"
                   placeholder="Transaction reference"
-                  value={paymentForm.referenceNumber}
-                  onChange={(e) => setPaymentForm(prev => ({ ...prev, referenceNumber: e.target.value }))}
+                  value={paymentForm.notes || ''}
+                  onChange={(e) => setPaymentForm(prev => ({ ...prev, notes: e.target.value }))}
                 />
               </div>
 

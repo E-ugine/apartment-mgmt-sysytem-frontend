@@ -115,7 +115,7 @@ export default function LandlordDashboard() {
             ) : (
               <>
                 <div className="text-2xl font-bold">
-                  ${paymentsSummary?.monthlyRevenue?.toLocaleString() || '0'}
+                  ${paymentsSummary?.totalAmount?.toLocaleString() || '0'}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   <span className={`inline-flex items-center ${

@@ -15,6 +15,14 @@ export interface Tenant {
   leaseStartDate?: string;
   leaseEndDate?: string;
   unitId?: string;
+  unit?: {
+    id: string;
+    unitNumber: string;
+    property?: {
+      id: string;
+      name: string;
+    };
+  };
   status: 'active' | 'inactive' | 'prospective';
   createdAt: string;
   updatedAt: string;
