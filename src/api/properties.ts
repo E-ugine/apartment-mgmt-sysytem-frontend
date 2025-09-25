@@ -31,26 +31,26 @@ export interface PropertySummary {
 
 export const propertiesApi = {
   getProperties: async (): Promise<Property[]> => {
-    const response = await apiClient.get<Property[]>('/api/properties/properties/');
+    const response = await apiClient.get<Property[]>('/api/properties/');
     return response.data;
   },
 
   getProperty: async (id: string): Promise<Property> => {
-    const response = await apiClient.get<Property>(`/api/properties/properties/${id}/`);
+    const response = await apiClient.get<Property>(`/api/properties/${id}/`);
     return response.data;
   },
 
   createProperty: async (data: PropertyCreate): Promise<Property> => {
-    const response = await apiClient.post<Property>('/api/properties/properties/', data);
+    const response = await apiClient.post<Property>('/api/properties/', data);
     return response.data;
   },
 
   updateProperty: async (id: string, data: Partial<Property>): Promise<Property> => {
-    const response = await apiClient.patch<Property>(`/api/properties/properties/${id}/`, data);
+    const response = await apiClient.patch<Property>(`/api/properties/${id}/`, data);
     return response.data;
   },
 
   deleteProperty: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/properties/properties/${id}/`);
+    await apiClient.delete(`/api/properties/${id}/`);
   },
 };
