@@ -47,9 +47,9 @@ export default function TenantDashboard() {
     });
   };
 
-  const recentPayments = payments?.slice(0, 5) || [];
-  const lastPayment = payments?.[0];
-  const unreadNotices = notices?.filter(notice => notice.priority === 'high' || notice.priority === 'urgent').length || 0;
+  const recentPayments = Array.isArray(payments) ? payments.slice(0, 5) : [];
+  const lastPayment = Array.isArray(payments) ? payments[0] : null;
+  const unreadNotices = Array.isArray(notices) ? notices.filter(notice => notice.priority === 'high' || notice.priority === 'urgent').length : 0;
 
   return (
     <div className="space-y-6">
@@ -97,7 +97,7 @@ export default function TenantDashboard() {
             <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{notices?.length || 0}</div>
+            <div className="text-2xl font-bold">{Array.isArray(notices) ? notices.length : 0}</div>
             <p className="text-xs text-muted-foreground">
               {unreadNotices} high priority
             </p>
@@ -120,7 +120,7 @@ export default function TenantDashboard() {
                 <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-20 w-full" />
               </>
-            ) : notices?.slice(0, 4).map((notice) => (
+            ) : Array.isArray(notices) ? notices.slice(0, 4).map((notice) => (
               <div key={notice.id} className="p-4 rounded-lg border bg-card">
                 <div className="flex items-start justify-between mb-2">
                   <h4 className="font-medium text-sm">{notice.title}</h4>
@@ -148,7 +148,7 @@ export default function TenantDashboard() {
                   })}
                 </p>
               </div>
-            )) || (
+            )) : (
               <p className="text-center text-muted-foreground py-8">
                 No notices available.
               </p>

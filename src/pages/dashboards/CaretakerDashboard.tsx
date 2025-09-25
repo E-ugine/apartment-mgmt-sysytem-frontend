@@ -91,9 +91,9 @@ export default function CaretakerDashboard() {
     return 'Good evening';
   };
 
-  const totalUnits = properties?.reduce((sum, prop) => sum + prop.totalUnits, 0) || 0;
-  const totalProperties = properties?.length || 0;
-  const urgentNotices = notices?.filter(notice => notice.priority === 'urgent').length || 0;
+  const totalUnits = Array.isArray(properties) ? properties.reduce((sum, prop) => sum + prop.totalUnits, 0) : 0;
+  const totalProperties = Array.isArray(properties) ? properties.length : 0;
+  const urgentNotices = Array.isArray(notices) ? notices.filter(notice => notice.priority === 'urgent').length : 0;
 
   return (
     <div className="space-y-6">
@@ -302,7 +302,7 @@ export default function CaretakerDashboard() {
                   <Skeleton className="h-16 w-full" />
                   <Skeleton className="h-16 w-full" />
                 </>
-              ) : notices?.slice(0, 3).map((notice) => (
+              ) : Array.isArray(notices) ? notices.slice(0, 3).map((notice) => (
                 <div key={notice.id} className="flex items-start space-x-3 p-3 rounded-lg border">
                   <Bell className={`h-4 w-4 mt-1 ${
                     notice.priority === 'urgent' ? 'text-destructive' :
@@ -316,7 +316,7 @@ export default function CaretakerDashboard() {
                     </p>
                   </div>
                 </div>
-              )) || (
+              )) : (
                 <p className="text-center text-muted-foreground py-4">
                   No notices found.
                 </p>
