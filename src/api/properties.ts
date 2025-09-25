@@ -13,6 +13,14 @@ export interface Property {
   updatedAt: string;
 }
 
+export interface PropertyCreate {
+  name: string;
+  address: string;
+  description?: string;
+  totalUnits: number;
+  caretakerId?: string;
+}
+
 export interface PropertySummary {
   totalProperties: number;
   totalUnits: number;
@@ -32,7 +40,7 @@ export const propertiesApi = {
     return response.data;
   },
 
-  createProperty: async (data: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property> => {
+  createProperty: async (data: PropertyCreate): Promise<Property> => {
     const response = await apiClient.post<Property>('/api/properties/properties/', data);
     return response.data;
   },

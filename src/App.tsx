@@ -13,6 +13,9 @@ import CaretakerDashboard from "./pages/dashboards/CaretakerDashboard";
 import TenantDashboard from "./pages/dashboards/TenantDashboard";
 import AgentDashboard from "./pages/dashboards/AgentDashboard";
 import DashboardRedirect from "./pages/DashboardRedirect";
+import PropertiesPage from "./pages/PropertiesPage";
+import UnitsPage from "./pages/UnitsPage";
+import TenantsPage from "./pages/TenantsPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFound from "./pages/NotFound";
 
@@ -77,14 +80,11 @@ const App = () => (
             {/* Generic dashboard redirect */}
             <Route path="/dashboard" element={<DashboardRedirect />} />
             
-            {/* Placeholder protected routes - to be implemented */}
+            {/* Properties & Units Management */}
             <Route path="/properties" element={
               <ProtectedRoute allowedRoles={['landlord', 'agent']}>
                 <AppLayout>
-                  <div className="text-center p-8">
-                    <h1 className="text-2xl font-bold">Properties</h1>
-                    <p className="text-muted-foreground">Properties page coming soon...</p>
-                  </div>
+                  <PropertiesPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
@@ -92,10 +92,7 @@ const App = () => (
             <Route path="/units" element={
               <ProtectedRoute allowedRoles={['landlord', 'caretaker', 'agent']}>
                 <AppLayout>
-                  <div className="text-center p-8">
-                    <h1 className="text-2xl font-bold">Units</h1>
-                    <p className="text-muted-foreground">Units page coming soon...</p>
-                  </div>
+                  <UnitsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
@@ -103,10 +100,7 @@ const App = () => (
             <Route path="/tenants" element={
               <ProtectedRoute allowedRoles={['landlord', 'caretaker', 'agent']}>
                 <AppLayout>
-                  <div className="text-center p-8">
-                    <h1 className="text-2xl font-bold">Tenants</h1>
-                    <p className="text-muted-foreground">Tenants page coming soon...</p>
-                  </div>
+                  <TenantsPage />
                 </AppLayout>
               </ProtectedRoute>
             } />
