@@ -196,7 +196,7 @@ export default function LandlordDashboard() {
                 <Skeleton className="h-16 w-full" />
                 <Skeleton className="h-16 w-full" />
               </>
-            ) : properties?.slice(0, 3).map((property) => (
+            ) : (Array.isArray(properties) ? properties : []).slice(0, 3).map((property) => (
               <div key={property.id} className="flex items-center justify-between p-3 rounded-lg border">
                 <div className="space-y-1">
                   <p className="font-medium text-sm">{property.name}</p>
