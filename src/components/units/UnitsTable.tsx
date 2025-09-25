@@ -48,7 +48,7 @@ export function UnitsTable() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPropertyId, setSelectedPropertyId] = useState('');
+  const [selectedPropertyId, setSelectedPropertyId] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [editingUnit, setEditingUnit] = useState<Unit | null>(null);
@@ -61,7 +61,7 @@ export function UnitsTable() {
 
   const { data: units, isLoading, error } = useQuery({
     queryKey: ['units', selectedPropertyId],
-    queryFn: () => unitsApi.getUnits(selectedPropertyId || undefined),
+    queryFn: () => unitsApi.getUnits(selectedPropertyId === 'all' ? undefined : selectedPropertyId),
   });
 
   const deleteMutation = useMutation({
@@ -174,7 +174,7 @@ export function UnitsTable() {
                 <SelectValue placeholder="All Properties" />
               </SelectTrigger>
               <SelectContent className="bg-background border shadow-lg z-50">
-                <SelectItem value="">All Properties</SelectItem>
+                <SelectItem value="all">All Properties</SelectItem>
                 {(Array.isArray(properties) ? properties : []).map((property) => (
                   <SelectItem key={property.id} value={property.id}>
                     {property.name}
@@ -215,7 +215,7 @@ export function UnitsTable() {
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
                       <div className="text-muted-foreground">
-                        {searchTerm || selectedPropertyId ? 
+                        {searchTerm || (selectedPropertyId !== 'all') ? 
                           'No units found matching your filters.' : 
                           'No units found. Add your first unit to get started.'
                         }
