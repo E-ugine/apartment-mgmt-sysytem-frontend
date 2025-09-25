@@ -1,21 +1,6 @@
-import { useState } from 'react';
-import { 
-  Home, 
-  Building2, 
-  Users, 
-  FileText, 
-  DollarSign, 
-  Settings, 
-  LogOut,
-  Bell,
-  UserCheck,
-  Wrench,
-  BarChart3
-} from 'lucide-react';
+import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
-
 import {
   Sidebar,
   SidebarContent,
@@ -25,100 +10,155 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
-  SidebarHeader,
-  SidebarFooter,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import {
+  Home,
+  Building,
+  Users,
+  DollarSign,
+  Bell,
+  Settings,
+  BarChart3,
+  Key,
+  Wrench,
+  FileText,
+  Calendar,
+  MessageSquare,
+} from 'lucide-react';
 
-interface NavItem {
-  title: string;
-  url: string;
-  icon: React.ComponentType<any>;
-  roles: UserRole[];
-}
-
-const navigationItems: NavItem[] = [
-  { title: 'Dashboard', url: '/dashboard', icon: Home, roles: ['landlord', 'caretaker', 'tenant', 'agent'] },
-  { title: 'Properties', url: '/properties', icon: Building2, roles: ['landlord', 'agent'] },
-  { title: 'Units', url: '/units', icon: Building2, roles: ['landlord', 'caretaker', 'agent'] },
-  { title: 'Tenants', url: '/tenants', icon: Users, roles: ['landlord', 'caretaker', 'agent'] },
-  { title: 'Leases', url: '/leases', icon: FileText, roles: ['landlord', 'caretaker', 'tenant', 'agent'] },
-  { title: 'Payments', url: '/payments', icon: DollarSign, roles: ['landlord', 'caretaker', 'tenant', 'agent'] },
-  { title: 'Maintenance', url: '/maintenance', icon: Wrench, roles: ['landlord', 'caretaker', 'tenant'] },
-  { title: 'Notices', url: '/notices', icon: Bell, roles: ['landlord', 'caretaker', 'tenant'] },
-  { title: 'Reports', url: '/reports', icon: BarChart3, roles: ['landlord', 'agent'] },
-  { title: 'User Management', url: '/users', icon: UserCheck, roles: ['landlord'] },
-];
+const roleMenus = {
+  landlord: [
+    { title: 'Dashboard', url: '/dashboard', icon: Home },
+    { title: 'Properties', url: '/properties', icon: Building },
+    { title: 'Units', url: '/units', icon: Key },
+    { title: 'Tenants', url: '/tenants', icon: Users },
+    { title: 'Payments', url: '/payments', icon: DollarSign },
+    { title: 'Notices', url: '/notices', icon: Bell },
+    { title: 'Reports', url: '/reports', icon: BarChart3 },
+  ],
+  caretaker: [
+    { title: 'Dashboard', url: '/dashboard', icon: Home },
+    { title: 'Properties', url: '/properties', icon: Building },
+    { title: 'Units', url: '/units', icon: Key },
+    { title: 'Tenants', url: '/tenants', icon: Users },
+    { title: 'Payments', url: '/payments', icon: DollarSign },
+    { title: 'Notices', url: '/notices', icon: Bell },
+    { title: 'Maintenance', url: '/maintenance', icon: Wrench },
+  ],
+  tenant: [
+    { title: 'Dashboard', url: '/dashboard', icon: Home },
+    { title: 'My Unit', url: '/unit', icon: Key },
+    { title: 'Payments', url: '/payments', icon: DollarSign },
+    { title: 'Notices', url: '/notices', icon: Bell },
+    { title: 'Maintenance', url: '/maintenance', icon: Wrench },
+    { title: 'Documents', url: '/documents', icon: FileText },
+  ],
+  agent: [
+    { title: 'Dashboard', url: '/dashboard', icon: Home },
+    { title: 'Properties', url: '/properties', icon: Building },
+    { title: 'Prospects', url: '/prospects', icon: Users },
+    { title: 'Tours', url: '/tours', icon: Calendar },
+    { title: 'Applications', url: '/applications', icon: FileText },
+    { title: 'Communications', url: '/communications', icon: MessageSquare },
+  ],
+};
 
 export function AppSidebar() {
+  const { user } = useAuth();
   const { state } = useSidebar();
-  const { user, logout } = useAuth();
+  const collapsed = state === 'collapsed';
   const location = useLocation();
   const currentPath = location.pathname;
-  const isCollapsed = state === 'collapsed';
 
-  const filteredItems = navigationItems.filter(item => 
-    user && item.roles.includes(user.role)
-  );
+  const menuItems = roleMenus[user?.role as keyof typeof roleMenus] || [];
 
-  const isActive = (path: string) => currentPath === path;
+  const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return currentPath === '/' || currentPath === '/dashboard';
+    }
+    return currentPath.startsWith(path);
+  };
 
-  const handleLogout = () => {
-    logout();
+  const getNavClass = (path: string) => {
+    const baseClass = "flex items-center w-full text-left transition-colors";
+    return isActive(path) 
+      ? `${baseClass} bg-primary/10 text-primary font-medium border-r-2 border-primary` 
+      : `${baseClass} hover:bg-muted/50`;
+  };
+
+  const getNotificationCount = (path: string) => {
+    // Mock notification counts - in real app, these would come from API
+    const notifications: Record<string, number> = {
+      '/notices': 3,
+      '/maintenance': 2,
+      '/payments': 1,
+    };
+    return notifications[path] || 0;
   };
 
   return (
-    <Sidebar
-      collapsible="icon"
-    >
-      <SidebarHeader className="p-4">
-        <div className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Building2 className="h-5 w-5" />
-          </div>
-          <span className="text-lg font-semibold group-data-[collapsible=icon]:hidden">ApartmentPro</span>
-        </div>
-      </SidebarHeader>
-
+    <Sidebar className={collapsed ? "w-14" : "w-64"}>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
+        <SidebarGroup className="px-0">
+          <SidebarGroupLabel className={`px-4 py-2 ${collapsed ? 'text-center' : ''}`}>
+            {collapsed ? user?.role?.charAt(0).toUpperCase() : user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+          </SidebarGroupLabel>
+          
           <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                  >
-                    <NavLink to={item.url} end>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="space-y-1">
+              {menuItems.map((item) => {
+                const notificationCount = getNotificationCount(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        className={getNavClass(item.url)}
+                        title={collapsed ? item.title : undefined}
+                      >
+                        <item.icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'} shrink-0`} />
+                        {!collapsed && (
+                          <div className="flex items-center justify-between w-full">
+                            <span className="truncate">{item.title}</span>
+                            {notificationCount > 0 && (
+                              <Badge 
+                                variant="secondary" 
+                                className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 min-w-[1.25rem] h-5"
+                              >
+                                {notificationCount > 99 ? '99+' : notificationCount}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                        {collapsed && notificationCount > 0 && (
+                          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                            {notificationCount > 9 ? '9+' : notificationCount}
+                          </div>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
+        {/* Settings Section */}
+        <SidebarGroup className="mt-auto px-0">
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild
-                  isActive={isActive('/settings')}
-                  tooltip="Settings"
-                >
-                  <NavLink to="/settings">
-                    <Settings className="h-4 w-4" />
-                    <span>Settings</span>
+                <SidebarMenuButton asChild>
+                  <NavLink 
+                    to="/settings" 
+                    className={getNavClass('/settings')}
+                    title={collapsed ? 'Settings' : undefined}
+                  >
+                    <Settings className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'} shrink-0`} />
+                    {!collapsed && <span>Settings</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -126,38 +166,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="p-4">
-        {user && (
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3 rounded-lg bg-muted p-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:space-x-0">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatar} alt={`${user.firstName || 'User'} ${user.lastName || 'Name'}`} />
-                <AvatarFallback>
-                  {(user.firstName?.[0] || 'U').toUpperCase()}{(user.lastName?.[0] || 'N').toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                <p className="text-sm font-medium truncate">
-                  {user.firstName || 'User'} {user.lastName || 'Name'}
-                </p>
-                <p className="text-xs text-muted-foreground capitalize truncate">
-                  {user.role}
-                </p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleLogout}
-              className="w-full justify-start group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
-            >
-              <LogOut className="h-4 w-4 group-data-[collapsible=icon]:mr-0 mr-2" />
-              <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
-            </Button>
-          </div>
-        )}
-      </SidebarFooter>
     </Sidebar>
   );
 }
