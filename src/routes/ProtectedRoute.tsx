@@ -13,13 +13,13 @@ interface ProtectedRouteProps {
 export const getRoleBasedDashboard = (role: UserRole): string => {
   switch (role) {
     case 'landlord':
-      return '/dashboard'; // Full access dashboard
+      return '/dashboard/landlord';
     case 'caretaker':
-      return '/dashboard'; // Maintenance-focused dashboard  
+      return '/dashboard/caretaker';
     case 'tenant':
-      return '/dashboard'; // Tenant portal dashboard
+      return '/dashboard/tenant';
     case 'agent':
-      return '/dashboard'; // Leasing-focused dashboard
+      return '/dashboard/agent';
     default:
       return '/dashboard';
   }

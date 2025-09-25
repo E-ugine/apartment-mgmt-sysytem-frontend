@@ -8,7 +8,11 @@ import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Index from "./pages/Index";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
+import LandlordDashboard from "./pages/dashboards/LandlordDashboard";
+import CaretakerDashboard from "./pages/dashboards/CaretakerDashboard";
+import TenantDashboard from "./pages/dashboards/TenantDashboard";
+import AgentDashboard from "./pages/dashboards/AgentDashboard";
+import DashboardRedirect from "./pages/DashboardRedirect";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFound from "./pages/NotFound";
 
@@ -37,14 +41,41 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             
-            {/* Protected routes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
+            {/* Role-specific protected dashboards */}
+            <Route path="/dashboard/landlord" element={
+              <ProtectedRoute allowedRoles={['landlord']}>
                 <AppLayout>
-                  <DashboardPage />
+                  <LandlordDashboard />
                 </AppLayout>
               </ProtectedRoute>
             } />
+            
+            <Route path="/dashboard/caretaker" element={
+              <ProtectedRoute allowedRoles={['caretaker']}>
+                <AppLayout>
+                  <CaretakerDashboard />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/dashboard/tenant" element={
+              <ProtectedRoute allowedRoles={['tenant']}>
+                <AppLayout>
+                  <TenantDashboard />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/dashboard/agent" element={
+              <ProtectedRoute allowedRoles={['agent']}>
+                <AppLayout>
+                  <AgentDashboard />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Generic dashboard redirect */}
+            <Route path="/dashboard" element={<DashboardRedirect />} />
             
             {/* Placeholder protected routes - to be implemented */}
             <Route path="/properties" element={
