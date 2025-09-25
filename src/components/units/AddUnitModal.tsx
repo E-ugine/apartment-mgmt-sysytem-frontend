@@ -171,7 +171,7 @@ export function AddUnitModal({ open, onClose, unit }: AddUnitModalProps) {
                   <SelectValue placeholder="Select a property" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border shadow-lg z-50">
-                  {properties?.map((property) => (
+                  {(Array.isArray(properties) ? properties : []).map((property) => (
                     <SelectItem key={property.id} value={property.id}>
                       {property.name}
                     </SelectItem>
