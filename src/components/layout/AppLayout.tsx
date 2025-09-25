@@ -47,16 +47,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <div className="flex items-center space-x-3">
                   <div className="hidden sm:block text-right">
                     <p className="text-sm font-medium">
-                      {user.firstName} {user.lastName}
+                      {user.firstName || 'User'} {user.lastName || 'Name'}
                     </p>
                     <p className="text-xs text-muted-foreground capitalize">
                       {user.role}
                     </p>
                   </div>
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
+                    <AvatarImage src={user.avatar} alt={`${user.firstName || 'User'} ${user.lastName || 'Name'}`} />
                     <AvatarFallback>
-                      {user.firstName[0]}{user.lastName[0]}
+                      {(user.firstName?.[0] || 'U').toUpperCase()}{(user.lastName?.[0] || 'N').toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </div>

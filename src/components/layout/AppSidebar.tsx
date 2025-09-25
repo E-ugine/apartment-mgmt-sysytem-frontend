@@ -132,14 +132,14 @@ export function AppSidebar() {
           <div className="space-y-3">
             <div className="flex items-center space-x-3 rounded-lg bg-muted p-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:space-x-0">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
+                <AvatarImage src={user.avatar} alt={`${user.firstName || 'User'} ${user.lastName || 'Name'}`} />
                 <AvatarFallback>
-                  {user.firstName[0]}{user.lastName[0]}
+                  {(user.firstName?.[0] || 'U').toUpperCase()}{(user.lastName?.[0] || 'N').toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                 <p className="text-sm font-medium truncate">
-                  {user.firstName} {user.lastName}
+                  {user.firstName || 'User'} {user.lastName || 'Name'}
                 </p>
                 <p className="text-xs text-muted-foreground capitalize truncate">
                   {user.role}
