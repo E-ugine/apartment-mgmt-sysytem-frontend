@@ -18,6 +18,7 @@ import PropertiesPage from "./pages/PropertiesPage";
 import UnitsPage from "./pages/UnitsPage";
 import TenantsPage from "./pages/TenantsPage";
 import PaymentsPage from "./pages/PaymentsPage";
+import NoticesPage from "./pages/NoticesPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFound from "./pages/NotFound";
 
@@ -112,6 +113,15 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <PaymentsPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Notices Management */}
+            <Route path="/notices" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <NoticesPage />
                 </AppLayout>
               </ProtectedRoute>
             } />

@@ -145,9 +145,9 @@ export default function LandlordDashboard() {
               <Skeleton className="h-8 w-16" />
             ) : (
               <>
-                <div className="text-2xl font-bold">{noticesStats?.activeNotices || 0}</div>
+                <div className="text-2xl font-bold">{noticesStats?.totalNotices || 0}</div>
                 <p className="text-xs text-muted-foreground">
-                  {noticesStats?.urgentNotices || 0} urgent notices
+                  {noticesStats?.urgentCount || 0} urgent notices
                 </p>
               </>
             )}

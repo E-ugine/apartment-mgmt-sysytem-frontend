@@ -136,8 +136,8 @@ export default function TenantDashboard() {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  {notice.content.substring(0, 120)}
-                  {notice.content.length > 120 ? '...' : ''}
+                  {notice.message.substring(0, 120)}
+                  {notice.message.length > 120 ? '...' : ''}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {new Date(notice.createdAt).toLocaleDateString('en-US', {
