@@ -45,8 +45,8 @@ export default function LandlordDashboard() {
     return 'Good evening';
   };
 
-  const totalUnits = properties?.reduce((sum, prop) => sum + prop.totalUnits, 0) || 0;
-  const occupiedUnits = properties?.reduce((sum, prop) => sum + prop.occupiedUnits, 0) || 0;
+  const totalUnits = (Array.isArray(properties) ? properties : []).reduce((sum, prop) => sum + prop.totalUnits, 0);
+  const occupiedUnits = (Array.isArray(properties) ? properties : []).reduce((sum, prop) => sum + prop.occupiedUnits, 0);
   const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
 
   return (
